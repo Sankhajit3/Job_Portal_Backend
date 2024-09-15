@@ -79,7 +79,7 @@ export const getJobById = async (req, res) => {
     }
 }
 // admin kitne job create kra hai abhi tk
-export const getAdminJobs = async (req, res) => {
+export const getRecruiterJobs = async (req, res) => {
     try {
         const adminId = req.id;
         const jobs = await Job.find({ created_by: adminId }).populate({
