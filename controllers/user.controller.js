@@ -124,7 +124,6 @@ export const updateProfile = async (req, res) => {
         const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
 
 
-
         let skillsArray;
         if(skills){
             skillsArray = skills.split(",");
@@ -172,3 +171,43 @@ export const updateProfile = async (req, res) => {
         console.log(error);
     }
 }
+
+export const deleteUser = async (req, res) => {
+    try {
+        // // Check if the user is an admin
+        // if (req.user.role !== 'admin') {
+        //     return res.status(403).json({
+        //         message: "Access denied. Only admins can delete users.",
+        //         success: false,
+        //     });
+        // }
+
+        const userId = req.params.id; // Assuming the user's ID is passed as a URL parameter
+
+        // Find the user by ID
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found.",
+                success: false,
+            });
+        }
+
+        // Delete the user from the database
+        await User.findByIdAndDelete(userId);
+
+        return res.status(200).json({
+            message: "User deleted successfully.",
+            success: true,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "An error occurred while deleting the user.",
+            success: false,
+        });
+    }
+};
+
+

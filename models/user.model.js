@@ -31,8 +31,10 @@ const userSchema = new mongoose.Schema({
         company:{type:mongoose.Schema.Types.ObjectId, ref:'Company'}, 
         profilePhoto:{
             type:String,
-            default:""
-        }
+            default:"",
+            required:true
+        },
     },
+    savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
 },{timestamps:true});
 export const User = mongoose.model('User', userSchema);
