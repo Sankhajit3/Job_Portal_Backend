@@ -104,6 +104,7 @@ export const login = async (req, res) => {
         console.log(error);
     }
 }
+
 export const logout = async (req, res) => {
     try {
         return res.status(200).cookie("token", "", { maxAge: 0 }).json({
@@ -114,6 +115,7 @@ export const logout = async (req, res) => {
         console.log(error);
     }
 }
+
 export const updateProfile = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
@@ -150,7 +152,6 @@ export const updateProfile = async (req, res) => {
             user.profile.resumeOriginalName = file.originalname //save the original file name
         }
 
-
         await user.save();
 
         user = {
@@ -171,41 +172,55 @@ export const updateProfile = async (req, res) => {
         console.log(error);
     }
 }
-
 export const deleteUser = async (req, res) => {
     try {
-        // // Check if the user is an admin
-        // if (req.user.role !== 'admin') {
-        //     return res.status(403).json({
-        //         message: "Access denied. Only admins can delete users.",
-        //         success: false,
-        //     });
-        // }
-
-        const userId = req.params.id; // Assuming the user's ID is passed as a URL parameter
-
-        // Find the user by ID
-        const user = await User.findById(userId);
+        const userId = req.params.id;
+        const user = await User.findByIdAndDelete(userId);
 
         if (!user) {
             return res.status(404).json({
                 message: "User not found.",
-                success: false,
+                success: false
             });
         }
 
-        // Delete the user from the database
-        await User.findByIdAndDelete(userId);
-
         return res.status(200).json({
             message: "User deleted successfully.",
-            success: true,
+            success: true
+        });
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error.",
+            success: false
+        });
+    }
+}
+export const getAllUsers = async (req, res) => {
+    try {
+        // Fetch all users from the database
+        const users = await User.find();
+
+        // Check if any users are found
+        if (!users || users.length === 0) {
+            return res.status(404).json({
+                message: "No users found.",
+                success: false
+            });
+        }
+
+        // Return the list of users
+        return res.status(200).json({
+            message: "Users retrieved successfully.",
+            users,
+            success: true
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
-            message: "An error occurred while deleting the user.",
-            success: false,
+            message: "An error occurred while fetching users.",
+            success: false
         });
     }
 };
